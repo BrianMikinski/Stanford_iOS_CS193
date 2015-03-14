@@ -48,6 +48,9 @@ class CalculatorBrain
         learnOp(Op.BinaryOperation("+", +))
         learnOp(Op.BinaryOperation("-"){$0 - $1})
         learnOp(Op.UnaryOperation("√", sqrt))
+        learnOp(Op.UnaryOperation("sin"){sin($0)})
+        learnOp(Op.UnaryOperation("cos"){cos($0)})
+        learnOp(Op.UnaryOperation("π") {M_PI * $0})
     }
     
     //Returning a tuble to hold our evaluation and the remaining operations
@@ -83,6 +86,11 @@ class CalculatorBrain
         }
         
         return (nil, ops)
+    }
+    
+    func clear() {
+        opStack.removeAll(keepCapacity: false)
+        println("Op Stack = \(opStack)")
     }
     
     func evaluate() ->Double? {
