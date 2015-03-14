@@ -10,6 +10,8 @@
 	<string>Calculator</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
+		<key>63B18F767E083A4C97B89826998469C0489B309F</key>
+		<string>https://github.com/TomMikinley/Homework1CS193.git</string>
 		<key>B94F677E0E0B66DFB9D8D31742E4ADCBB086F373</key>
 		<string>http://github.com/TomMikinley/iOS8SwiftTutorials.git</string>
 	</dict>
@@ -17,15 +19,17 @@
 	<string>Calculator.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>B94F677E0E0B66DFB9D8D31742E4ADCBB086F373</key>
+		<key>63B18F767E083A4C97B89826998469C0489B309F</key>
 		<string>../..</string>
+		<key>B94F677E0E0B66DFB9D8D31742E4ADCBB086F373</key>
+		<string>../../../Calculator</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>http://github.com/TomMikinley/iOS8SwiftTutorials.git</string>
+	<string>https://github.com/TomMikinley/Homework1CS193.git</string>
 	<key>IDESourceControlProjectVersion</key>
 	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>B94F677E0E0B66DFB9D8D31742E4ADCBB086F373</string>
+	<string>63B18F767E083A4C97B89826998469C0489B309F</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
@@ -35,6 +39,14 @@
 			<string>B94F677E0E0B66DFB9D8D31742E4ADCBB086F373</string>
 			<key>IDESourceControlWCCName</key>
 			<string>Calculator</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>63B18F767E083A4C97B89826998469C0489B309F</string>
+			<key>IDESourceControlWCCName</key>
+			<string>feature_test_a</string>
 		</dict>
 	</array>
 </dict>
