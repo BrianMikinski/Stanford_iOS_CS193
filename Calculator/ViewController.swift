@@ -27,15 +27,22 @@ class ViewController: UIViewController {
         
         let digit = sender.currentTitle!
         saveHistory(digit)
-    
-        if userIsInTheMiddleOfTypingANumber {
+        
+        //Handle "." floating point numbers
+        if ( digit == ".")
+        {
+            if (!IsDecimalPresent) {
+                appendOperandCharacter(digit)
+                IsDecimalPresent = true
+                userIsInTheMiddleOfTypingANumber = true
+            }
+        //Handle constants and variables
+        } else if let constant = constant(digit) {
+            //let Operand1 = brain.pushOperand(displayValue)
+            let Operand2 = brain.pushOperand(constant)
             
-            if let constant = GetConstant(digit) {
-                
-                userIsInTheMiddleOfTypingANumber = false
-                //let Operand1 = brain.pushOperand(displayValue)
-                let Operand2 = brain.pushOperand(constant)
-                
+            if(userIsInTheMiddleOfTypingANumber)
+            {
                 if let result = brain.pushOperand(displayValue) {
                     displayValue = result
                 }
@@ -43,9 +50,14 @@ class ViewController: UIViewController {
                     displayValue = 0
                 }
             }
-
             
-            display.text = display.text! + digit
+            appendOperandCharacter(digit)
+            userIsInTheMiddleOfTypingANumber = false
+            IsDecimalPresent = false
+        //Handle all other types of input
+        } else if userIsInTheMiddleOfTypingANumber {
+            
+            appendOperandCharacter(digit)
             
         } else {
             display.text = digit
@@ -53,14 +65,16 @@ class ViewController: UIViewController {
         }
     }
     
-    //Check to see if the variable is a constant or not - PI would be an example of a constant
-    func GetConstant(test: String) -> Double?
-    {
-        switch test{
-            case "π":
-                return M_PI
-        default:
-            return nil
+    //Add the key to the top of the stack
+    @IBAction func enter() {
+        userIsInTheMiddleOfTypingANumber = false
+        IsDecimalPresent = false
+        
+        if let result = brain.pushOperand(displayValue) {
+            displayValue = result
+        }
+        else {
+            displayValue = 0
         }
     }
     
@@ -68,6 +82,8 @@ class ViewController: UIViewController {
     @IBAction func operate(sender: UIButton) {
         
         saveHistory(sender.currentTitle!)
+        
+        println("Current number = \(sender.currentTitle!)")
         
         if userIsInTheMiddleOfTypingANumber {
             
@@ -83,51 +99,6 @@ class ViewController: UIViewController {
         }
     }
     
-    
-    
-    func saveHistory(term: String)
-    {
-        lblHistory.text = lblHistory.text! + term
-    }
-    
-    //Add the key to the top of the stack
-    @IBAction func enter() {
-        userIsInTheMiddleOfTypingANumber = false
-        
-
-        
-        if let result = brain.pushOperand(displayValue) {
-            displayValue = result
-        }
-        else {
-            displayValue = 0
-        }
-    }
-    
-    //Format a double value from the displayed string
-    //If this happens to be the Pi character than we
-    //return the pi constant
-    var displayValue: Double {
-        get {
-            
-//            if(display.text! == "π")
-//            {
-//                return M_PI
-//            }
-            
-            if let constant = GetConstant(display.text!) {
-                return constant
-            }
-            else {
-            
-                return NSNumberFormatter().numberFromString(display.text!)!.doubleValue
-            }
-        }
-        set {
-            display.text = "\(newValue)"
-        }
-    }
-    
     //Reset the app to its orginal state
     @IBAction func clearAll(sender: UIButton) {
         
@@ -139,17 +110,50 @@ class ViewController: UIViewController {
         userIsInTheMiddleOfTypingANumber = false;
     }
     
+    //Format a double value from the displayed string
+    //If this happens to be the Pi character than we
+    //return the pi constant
+    var displayValue: Double {
+        get {
+            
+            if let constant = constant(display.text!) {
+                return constant
+            } else {
+                return NSNumberFormatter().numberFromString(display.text!)!.doubleValue
+            }
+        }
+        set {
+            display.text = "\(newValue)"
+        }
+    }
+    
     //Add to the history label text box
-    func appendHistory(newString: String ) {
+    private func appendHistory(newString: String ) {
         lblHistory.text = lblHistory.text! + newString
     }
     
-    func appendEquals()
+    private func appendEquals()
     {
         lblHistory.text = lblHistory.text! + "="
     }
     
-    func isConstant(newString: String) -> Bool
+    private func appendOperandCharacter(digit: String)
+    {
+        display.text = display.text! + digit
+    }
+    
+    //Check to see if the variable is a constant or not - PI would be an example of a constant
+    private func constant(test: String) -> Double?
+    {
+        switch test{
+        case "π":
+            return M_PI
+        default:
+            return nil
+        }
+    }
+    
+    private func isConstant(newString: String) -> Bool
     {
         switch newString {
         case "π": return true
@@ -157,6 +161,8 @@ class ViewController: UIViewController {
         }
     }
     
-   
+    private func saveHistory(term: String)
+    {
+        lblHistory.text = lblHistory.text! + term
+    }
 }
-
