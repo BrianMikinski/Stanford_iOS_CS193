@@ -26,7 +26,7 @@ class ViewController: UIViewController {
     @IBAction func appendDigit(sender: UIButton) {
         
         let digit = sender.currentTitle!
-        saveHistory(digit)
+        saveOperand(digit)
         
         //Handle "." floating point numbers
         if ( digit == ".")
@@ -43,7 +43,7 @@ class ViewController: UIViewController {
             
             if(userIsInTheMiddleOfTypingANumber)
             {
-                if let result = brain.pushOperand(displayValue) {
+                if let result = brain.pushOperand(displayValue!) {
                     displayValue = result
                 }
                 else {
@@ -70,18 +70,18 @@ class ViewController: UIViewController {
         userIsInTheMiddleOfTypingANumber = false
         IsDecimalPresent = false
         
-        if let result = brain.pushOperand(displayValue) {
+        if let result = brain.pushOperand(displayValue!) {
             displayValue = result
         }
         else {
-            displayValue = 0
+            displayValue = nil
         }
     }
     
     //Perform a mathematical operation
     @IBAction func operate(sender: UIButton) {
         
-        saveHistory(sender.currentTitle!)
+        saveOperation(sender.currentTitle!)
         
         println("Current number = \(sender.currentTitle!)")
         
@@ -94,10 +94,17 @@ class ViewController: UIViewController {
             if let result = brain.performOperation(operation) {
                 displayValue = result
             } else {
-                displayValue = 0
+                displayValue = nil
             }
         }
     }
+    
+    //Delete the last input item
+    @IBAction func Backspace(sender: UIButton) {
+    
+        
+    }
+    
     
     //Reset the app to its orginal state
     @IBAction func clearAll(sender: UIButton) {
@@ -106,25 +113,42 @@ class ViewController: UIViewController {
         brain.clear()
         
         lblHistory.text = ""
-        display.text = "0"
+        displayValue = nil
         userIsInTheMiddleOfTypingANumber = false;
     }
     
     //Format a double value from the displayed string
     //If this happens to be the Pi character than we
     //return the pi constant
-    var displayValue: Double {
+    var displayValue: Double? {
         get {
             
             if let constant = constant(display.text!) {
                 return constant
             } else {
-                return NSNumberFormatter().numberFromString(display.text!)!.doubleValue
+                
+                var number = NSNumberFormatter().numberFromString(display.text!)?
+                
+                if number != nil {
+                    return number!.doubleValue
+                }
+                else {
+                    return nil
+                }
             }
         }
         set {
-            display.text = "\(newValue)"
+            
+            if(newValue == nil) {
+                display.text = " "
+            } else {
+                display.text = "\(newValue!)"
+            }
         }
+    }
+    
+    private func appendEquals() {
+        lblHistory.text = lblHistory.text! + "="
     }
     
     //Add to the history label text box
@@ -132,20 +156,13 @@ class ViewController: UIViewController {
         lblHistory.text = lblHistory.text! + newString
     }
     
-    private func appendEquals()
-    {
-        lblHistory.text = lblHistory.text! + "="
-    }
-    
-    private func appendOperandCharacter(digit: String)
-    {
+    private func appendOperandCharacter(digit: String) {
         display.text = display.text! + digit
     }
     
     //Check to see if the variable is a constant or not - PI would be an example of a constant
-    private func constant(test: String) -> Double?
-    {
-        switch test{
+    private func constant(operand: String) -> Double? {
+        switch operand {
         case "π":
             return M_PI
         default:
@@ -153,16 +170,19 @@ class ViewController: UIViewController {
         }
     }
     
-    private func isConstant(newString: String) -> Bool
-    {
+    //Check if a variable is a constant or not
+    private func isConstant(newString: String) -> Bool {
         switch newString {
         case "π": return true
         default: return false
         }
     }
     
-    private func saveHistory(term: String)
-    {
+    private func saveOperand(term: String) {
         lblHistory.text = lblHistory.text! + term
+    }
+    
+    private func saveOperation(term: String) {
+        lblHistory.text = "\(lblHistory.text!)\(term) = "
     }
 }
