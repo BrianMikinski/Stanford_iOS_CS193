@@ -38,8 +38,6 @@ class ViewController: UIViewController {
             }
         //Handle constants and variables
         } else if let constant = constant(digit) {
-            //let Operand1 = brain.pushOperand(displayValue)
-            let Operand2 = brain.pushOperand(constant)
             
             if(userIsInTheMiddleOfTypingANumber)
             {
@@ -50,6 +48,9 @@ class ViewController: UIViewController {
                     displayValue = 0
                 }
             }
+            
+            //let Operand1 = brain.pushOperand(displayValue)
+            let Operand2 = brain.pushOperand(constant)
             
             appendOperandCharacter(digit)
             userIsInTheMiddleOfTypingANumber = false
@@ -102,9 +103,43 @@ class ViewController: UIViewController {
     //Delete the last input item
     @IBAction func Backspace(sender: UIButton) {
     
+        //let currentDigit = display.text!
         
+        //println("Backspace: current operand = \(currentDigit)")
+        
+        if (countElements(display.text!) > 0) {
+            
+            println("Backspace: last character of operand = \"\(display.text!)\"")
+            
+            var operand = display.text;
+            //.endIndex is one over the last index so you
+            let index = operand!.endIndex.predecessor()
+            
+            println("Backspace: Last indexed character: = \"\(index)")
+            
+            var lastDigit = operand![index]
+            println("Backspace: last character of operand = \"\(lastDigit)\"")
+            
+            if let constant = constant(String(lastDigit))
+            {
+                println("Backspace: constant = \"\(lastDigit)\"")
+                brain.removeConstant()
+            }
+            
+            display.text = dropLast(display.text!)
+            
+            if (countElements(display.text!) > 0) {
+                userIsInTheMiddleOfTypingANumber = true
+            }
+            else {
+                userIsInTheMiddleOfTypingANumber = false
+            }
+            
+            if displayValue == nil {
+                
+            }
+        }
     }
-    
     
     //Reset the app to its orginal state
     @IBAction func clearAll(sender: UIButton) {
@@ -114,7 +149,8 @@ class ViewController: UIViewController {
         
         lblHistory.text = ""
         displayValue = nil
-        userIsInTheMiddleOfTypingANumber = false;
+        userIsInTheMiddleOfTypingANumber = false
+        IsDecimalPresent = false
     }
     
     //Format a double value from the displayed string

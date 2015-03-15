@@ -53,9 +53,13 @@ class CalculatorBrain
         learnOp(Op.UnaryOperation("π") {M_PI * $0})
     }
     
+    func clear() {
+        opStack.removeAll(keepCapacity: false)
+        println("Op Stack = \(opStack)")
+    }
+    
     //Returning a tuble to hold our evaluation and the remaining operations
-    private func evaluate(ops: [Op]) -> (result: Double?, remainingOps: [Op])
-    {
+    private func evaluate(ops: [Op]) -> (result: Double?, remainingOps: [Op]) {
         //There is an error here because it is an array and not a class. That means that the 
         //operation is passed by value as opposed to reference! So it is copied and not referenced
         if !ops.isEmpty {
@@ -88,11 +92,6 @@ class CalculatorBrain
         return (nil, ops)
     }
     
-    func clear() {
-        opStack.removeAll(keepCapacity: false)
-        println("Op Stack = \(opStack)")
-    }
-    
     func evaluate() ->Double? {
         //Tuple closure? declare a tuple without a type?
         let (result, remainder) = evaluate(opStack)
@@ -111,5 +110,12 @@ class CalculatorBrain
         }
         
         return evaluate()
+    }
+    
+    func removeConstant() {
+        opStack.removeLast()
+        println("Op Stack = \(opStack)")
+        opStack.removeLast()
+        println("Op Stack = \(opStack)")
     }
 }
