@@ -118,4 +118,12 @@ class CalculatorBrain
         opStack.removeLast()
         println("Op Stack = \(opStack)")
     }
+    
+    //Function used to print debug values to the command line
+    func peek(debugValue: Any) -> Any{
+        
+        println("[peek] \(debugValue)")
+        
+        return debugValue
+    }
 }
