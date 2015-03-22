@@ -14,6 +14,7 @@ class CalculatorBrain
         case Operand(Double)
         case UnaryOperation(String, Double ->Double)
         case BinaryOperation(String, (Double, Double) -> Double)
+        case Variable(String)
         
         var description: String {
             get {
@@ -24,6 +25,8 @@ class CalculatorBrain
                     return "\(symbol)"
                 case .BinaryOperation(let symbol, _):
                     return symbol
+                case .Variable(let symbol):
+                    return "\(symbol)"
                 }
             }
         }
@@ -36,6 +39,11 @@ class CalculatorBrain
     //Alternative form of declaring dictionay
     //var knownOps = Dictionary<String, Op>()
     private var knownOps = [String:Op]()
+    
+    //Stack to hold variables added to the device
+    //var variablesValues: Dictionary<String,Double>
+    //This is the short syntax for dictionary initialization
+    private var variablesValues = [String:Double]()
     
     init()
     {
@@ -55,7 +63,62 @@ class CalculatorBrain
     
     func clear() {
         opStack.removeAll(keepCapacity: false)
+        variablesValues.removeAll(keepCapacity: false)
         println("Op Stack = \(opStack)")
+    }
+    
+    //Print an infix description of the stack
+    //The Stack is generally in RPN (Reverse Polish Notation)
+    //print out the correct description
+    var description: String {
+        get {
+                let (result, printRemainder) = print(opStack)
+                var printResult = result! + " = "
+                println("\(printResult)")
+            
+                return printResult
+        }
+    }
+    
+    //Create a string from the Op stack
+    private func print(ops: [Op]) -> (result: String?, remainingOps: [Op]) {
+        
+        if !ops.isEmpty {
+            var remainingOps = ops
+            let op = remainingOps.removeLast()
+            var  opValue : String = "?"
+            
+            if let isKnown = knownOps[op.description] {
+                opValue = op.description
+            }
+            
+            switch op {
+            case .Operand(let operand):
+                return ("\(operand)", remainingOps)
+                
+            case .UnaryOperation(_, let operation):
+                
+                let operandEvaluation = print(remainingOps)
+                if let operand = operandEvaluation.result {
+                    return ("\(opValue)(\(operand))", operandEvaluation.remainingOps)
+                }
+                
+            case .BinaryOperation(_ , let operation):
+                
+                let op1Evaluation = print(remainingOps)
+                if let operand1 = op1Evaluation.result {
+                    let op2Evaluation = print(op1Evaluation.remainingOps)
+                    if let operand2 = op2Evaluation.result {
+                        return ("( \(operand2) \(opValue) \(operand1) )", op2Evaluation.remainingOps)
+                    }
+                }
+                
+            case .Variable(let symbol):
+                return (symbol, remainingOps)
+            }
+        }
+        
+        return ("?", ops)
     }
     
     //Returning a tuble to hold our evaluation and the remaining operations
@@ -86,6 +149,11 @@ class CalculatorBrain
                         return (operation(operand1, operand2), op2Evaluation.remainingOps)
                     }
                 }
+            case .Variable(let symbol):
+                
+                if let op1Evaluation = variablesValues[symbol] {
+                return (op1Evaluation, remainingOps)
+                }
             }
         }
         
@@ -96,6 +164,9 @@ class CalculatorBrain
         //Tuple closure? declare a tuple without a type?
         let (result, remainder) = evaluate(opStack)
         println("\(opStack) = \(result) with \(remainder) left over")
+        
+
+        
         return result
     }
     
@@ -109,6 +180,11 @@ class CalculatorBrain
             opStack.append(operation)
         }
         
+        return evaluate()
+    }
+    
+    func pushOperand(symbol: String) -> Double? {
+        opStack.append(Op.Variable(symbol))
         return evaluate()
     }
     

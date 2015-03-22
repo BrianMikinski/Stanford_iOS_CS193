@@ -64,6 +64,8 @@ class ViewController: UIViewController {
             display.text = digit
             userIsInTheMiddleOfTypingANumber = true
         }
+        
+        
     }
     
     //Add the key to the top of the stack
@@ -98,14 +100,12 @@ class ViewController: UIViewController {
                 displayValue = nil
             }
         }
+        
+        getDisplayResult()
     }
     
     //Delete the last input item
     @IBAction func Backspace(sender: UIButton) {
-    
-        //let currentDigit = display.text!
-        
-        //println("Backspace: current operand = \(currentDigit)")
         
         if (countElements(display.text!) > 0) {
             
@@ -189,7 +189,9 @@ class ViewController: UIViewController {
     
     //Add to the history label text box
     private func appendHistory(newString: String ) {
-        lblHistory.text = lblHistory.text! + newString
+//        lblHistory.text = lblHistory.text! + newString
+        
+        
     }
     
     private func appendOperandCharacter(digit: String) {
@@ -210,8 +212,13 @@ class ViewController: UIViewController {
     private func isConstant(newString: String) -> Bool {
         switch newString {
         case "π": return true
-        default: return false
+        default : return false
         }
+    }
+    
+    private func getDisplayResult()
+    {
+        lblHistory.text = brain.description
     }
     
     private func saveOperand(term: String) {
