@@ -22,15 +22,18 @@ class ViewController: UIViewController {
     
     var brain = CalculatorBrain()
     
-    //Append a digit to the top of the stack
+    /**
+    Append a digit to the top of the stack.
+    
+    :param: sender One of the 10 digit buttons.
+    */
     @IBAction func appendDigit(sender: UIButton) {
         
         let digit = sender.currentTitle!
         saveOperand(digit)
         
         //Handle "." floating point numbers
-        if ( digit == ".")
-        {
+        if ( digit == ".") {
             if (!IsDecimalPresent) {
                 appendOperandCharacter(digit)
                 IsDecimalPresent = true
@@ -64,11 +67,11 @@ class ViewController: UIViewController {
             display.text = digit
             userIsInTheMiddleOfTypingANumber = true
         }
-        
-        
     }
     
-    //Add the key to the top of the stack
+    /**
+    Add the entered number to the calculator brain stack.
+    */
     @IBAction func enter() {
         userIsInTheMiddleOfTypingANumber = false
         IsDecimalPresent = false
@@ -81,7 +84,38 @@ class ViewController: UIViewController {
         }
     }
     
-    //Perform a mathematical operation
+    /**
+    Save a variable to the stack.
+    
+    :param: sender The "m->" button.
+    */
+    @IBAction func storeVariable(sender: UIButton) {
+
+        var number = NSNumberFormatter().numberFromString(display.text!)
+        
+        //if number != nil {
+            if let result = brain.saveVariableOperand(number!.doubleValue) {
+                displayValue = result
+            }
+        //}
+    }
+    
+    /**
+    Get the value of the stored variable.
+    
+    param: sender The "M" button
+    */
+    @IBAction func GetStoredVariable(sender: UIButton) {
+        
+        brain.pushVariableOperand("x")
+    }
+
+    
+    /**
+    Function that takes an operation entered by the user and applies it to the stack.
+    
+    :param: sender A UI button object that represents an operation.
+    */
     @IBAction func operate(sender: UIButton) {
         
         saveOperation(sender.currentTitle!)
@@ -104,10 +138,14 @@ class ViewController: UIViewController {
         getDisplayResult()
     }
     
-    //Delete the last input item
+    /**
+    Remove the last character that was entered.
+    
+    :param: sender A button representing the backspace action.
+    */
     @IBAction func Backspace(sender: UIButton) {
         
-        if (countElements(display.text!) > 0) {
+        if (count(display.text!) > 0) {
             
             println("Backspace: last character of operand = \"\(display.text!)\"")
             
@@ -128,7 +166,7 @@ class ViewController: UIViewController {
             
             display.text = dropLast(display.text!)
             
-            if (countElements(display.text!) > 0) {
+            if (count(display.text!) > 0) {
                 userIsInTheMiddleOfTypingANumber = true
             }
             else {
@@ -141,7 +179,11 @@ class ViewController: UIViewController {
         }
     }
     
-    //Reset the app to its orginal state
+    /**
+    Reset the displayValue, history label, brain stack and calculator brain it their initial values.
+    
+    :param: sender <#sender description#>
+    */
     @IBAction func clearAll(sender: UIButton) {
         
         //Clear the operand stack
@@ -153,9 +195,10 @@ class ViewController: UIViewController {
         IsDecimalPresent = false
     }
     
-    //Format a double value from the displayed string
-    //If this happens to be the Pi character than we
-    //return the pi constant
+
+    /// Format a double value from the displayed string
+    /// If this happens to be the Pi character than we
+    /// return the pi constant
     var displayValue: Double? {
         get {
             
@@ -163,7 +206,7 @@ class ViewController: UIViewController {
                 return constant
             } else {
                 
-                var number = NSNumberFormatter().numberFromString(display.text!)?
+                var number = NSNumberFormatter().numberFromString(display.text!)
                 
                 if number != nil {
                     return number!.doubleValue
@@ -183,22 +226,35 @@ class ViewController: UIViewController {
         }
     }
     
+    /**
+    Add an "=" sign on to the end of the history label.
+    */
     private func appendEquals() {
         lblHistory.text = lblHistory.text! + "="
     }
     
     //Add to the history label text box
     private func appendHistory(newString: String ) {
-//        lblHistory.text = lblHistory.text! + newString
-        
+        //lblHistory.text = lblHistory.text! + newString
         
     }
     
+    /**
+    Append a digit or constant to the display text.
+    
+    :param: digit The digit or constant to appaend to the end of the display text.
+    */
     private func appendOperandCharacter(digit: String) {
         display.text = display.text! + digit
     }
     
-    //Check to see if the variable is a constant or not - PI would be an example of a constant
+    /**
+    Check for a constant variable value
+    
+    :param: operand The operand to be matched to a value.
+    
+    :returns: The value of the operand.
+    */
     private func constant(operand: String) -> Double? {
         switch operand {
         case "π":
@@ -208,7 +264,13 @@ class ViewController: UIViewController {
         }
     }
     
-    //Check if a variable is a constant or not
+    /**
+    Check if a variable is a constant or not.
+    
+    :param: newString The character to check against a list of constants.
+    
+    :returns: A boolean value if the function is a constant.
+    */
     private func isConstant(newString: String) -> Bool {
         switch newString {
         case "π": return true
@@ -216,15 +278,28 @@ class ViewController: UIViewController {
         }
     }
     
+    /**
+    Get an infix display of the calculator brain stack.
+    */
     private func getDisplayResult()
     {
         lblHistory.text = brain.description
     }
     
+    /**
+    Save the operand to the history label.
+    
+    :param: term The character being saved.
+    */
     private func saveOperand(term: String) {
         lblHistory.text = lblHistory.text! + term
     }
     
+    /**
+    Save an operation to the stack.
+    
+    :param: term One of the many operators that can be saved to the stack.
+    */
     private func saveOperation(term: String) {
         lblHistory.text = "\(lblHistory.text!)\(term) = "
     }

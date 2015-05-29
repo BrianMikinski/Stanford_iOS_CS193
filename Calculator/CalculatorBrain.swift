@@ -80,7 +80,10 @@ class CalculatorBrain
         }
     }
     
-    //Create a string from the Op stack
+    /*
+     *
+     *
+     */
     private func print(ops: [Op]) -> (result: String?, remainingOps: [Op]) {
         
         if !ops.isEmpty {
@@ -114,7 +117,9 @@ class CalculatorBrain
                 }
                 
             case .Variable(let symbol):
+                if let op1Evaluation = variablesValues["x"] {
                 return (symbol, remainingOps)
+                }
             }
         }
         
@@ -165,26 +170,43 @@ class CalculatorBrain
         let (result, remainder) = evaluate(opStack)
         println("\(opStack) = \(result) with \(remainder) left over")
         
-
-        
         return result
     }
     
+    //Push an operand
     func pushOperand(operand: Double) -> Double? {
         opStack.append(Op.Operand(operand))
         return evaluate()
     }
     
+    //Push a variable onto the stack
+    func pushVariableOperand(symbol: String) -> Double? {
+        opStack.append(Op.Variable(symbol))
+        return evaluate()
+    }
+    
+    func pullVariableOperand() -> Double? {
+        
+        let variable = variablesValues["x"]
+        
+        return variable
+    }
+    
+    //Save the value of the variable to a dictionary
+    func saveVariableOperand(value: Double) -> Double? {
+        variablesValues["x"] = value
+        
+        peek(value)
+        
+        return evaluate();
+    }
+    
+    //Perform an operation on a stack
     func performOperation(symbol: String) -> Double?{
         if let operation = knownOps[symbol] {
             opStack.append(operation)
         }
         
-        return evaluate()
-    }
-    
-    func pushOperand(symbol: String) -> Double? {
-        opStack.append(Op.Variable(symbol))
         return evaluate()
     }
     
