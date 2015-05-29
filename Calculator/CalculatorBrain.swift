@@ -117,9 +117,7 @@ class CalculatorBrain
                 }
                 
             case .Variable(let symbol):
-                if let op1Evaluation = variablesValues["x"] {
                 return (symbol, remainingOps)
-                }
             }
         }
         
